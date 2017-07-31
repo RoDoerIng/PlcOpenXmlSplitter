@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using log4net;
 using log4net.Config;
 using System.Reflection;
+using PlcOpenXmlSplitter.CommandLineParser;
+using System.IO;
 
-namespace PlcOpenXmlSplitterApp
+namespace PlcOpenXmlSplitter
 {
     class Program
     {
@@ -17,7 +19,14 @@ namespace PlcOpenXmlSplitterApp
 
         static void Main(string[] args)
         {
-            
+            var cmdOptions = new CommandLineParserOptions();
+
+            if (CommandLine.Parser.Default.ParseArguments(args, cmdOptions))
+            {
+                var xmlFile = File.Open(cmdOptions.plcOpenXmlFile, FileMode.Open);
+                Console.WriteLine(xmlFile.CanRead);
+                xmlFile.Close();
+            }
         }
     }
 }
