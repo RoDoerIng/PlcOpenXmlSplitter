@@ -17,8 +17,6 @@ namespace PlcOpenXmlSplitterApp
 
         static void Main(string[] args)
         {
-            XmlConfigurator.Configure();
-
             log.Debug("Debug message");
             log.Info("Info message");
             log.Warn("Warning message");
