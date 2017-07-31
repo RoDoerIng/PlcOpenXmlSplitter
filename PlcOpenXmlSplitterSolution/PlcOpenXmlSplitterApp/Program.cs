@@ -17,13 +17,7 @@ namespace PlcOpenXmlSplitterApp
 
         static void Main(string[] args)
         {
-            /*
-            log.Debug("Debug message");
-            log.Info("Info message");
-            log.Warn("Warning message");
-            log.Error("Error message");
-            log.Fatal("Fatal message");
-            */
+            
         }
     }
 }
