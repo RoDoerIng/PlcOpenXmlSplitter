@@ -9,6 +9,7 @@ using log4net.Config;
 using System.Reflection;
 using PlcOpenXmlSplitter.CommandLineParser;
 using System.IO;
+using PlcOpenXmlSplitter.XmlParser;
 
 namespace PlcOpenXmlSplitter
 {
@@ -23,9 +24,9 @@ namespace PlcOpenXmlSplitter
 
             if (CommandLine.Parser.Default.ParseArguments(args, cmdOptions))
             {
-                var xmlFile = File.Open(cmdOptions.plcOpenXmlFile, FileMode.Open);
-                Console.WriteLine(xmlFile.CanRead);
-                xmlFile.Close();
+                log.Debug("commandline arguments successfully parsed");
+                var parser = new PlcOpenXmlParser(cmdOptions.plcOpenXmlFile);
+                parser.run();
             }
         }
     }
