@@ -38,12 +38,13 @@ namespace PlcOpenXmlSplitter.XmlParser
 
             this.createReader();
 
-            var xmlDoc = XDocument.Load(this.FileName);
+            var xmlDoc = XElement.Load(this.reader);
 
             log.Debug("Query xml document for pou elements");
             // TODO
-            var elements = xmlDoc.FirstNode;
-            var result = from el in xmlDoc.Elements()
+            var root = xmlDoc.Elements();
+            var pous = xmlDoc.Element("types");
+            var result = from el in root.Descendants("types").Descendants("pous")
                          where el.Name.Equals("pou")
                          select el;
 
