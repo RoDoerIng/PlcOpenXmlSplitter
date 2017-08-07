@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlcOpenXmlSplitter.XmlParser
 { 
-    interface IRunnable
+    public interface IRunnable
     {
         void run();
     }

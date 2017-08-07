@@ -25,7 +25,7 @@ namespace PlcOpenXmlSplitter
             if (CommandLine.Parser.Default.ParseArguments(args, cmdOptions))
             {
                 log.Debug("commandline arguments successfully parsed");
-                var parser = new PlcOpenXmlParser(cmdOptions.plcOpenXmlFile);
+                IRunnable parser = new PlcOpenXmlParser(cmdOptions.plcOpenXmlFile);
                 parser.run();
             }
         }

@@ -76,9 +76,31 @@ namespace PlcOpenXmlSplitter.XmlParser
                         // holds the value of the 'name' attribute of current xml node 
                         var nodeNameAttribute = reader.GetAttribute("name");
                         var nodeToBeSaved = XElement.Parse(reader.ReadOuterXml());
-                        var fNameToSave = this.xmlFolder + @"\" + nodeToBeSaved.Name.LocalName +"_" + nodeNameAttribute + ".xml";
+                        var exportFolder = this.xmlFolder + @"\exported\";
+
+                        log.Debug("checked if export folder already exists");
+                        if (Directory.Exists(exportFolder))
+                        {
+                            log.Debug("export folder already exists, do nothing...");
+                        }
+                        else 
+                        {
+                            log.Info("export folder does not exist, lets create it");
+                            try
+                            {
+                                Directory.CreateDirectory(exportFolder);
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error("creating export folder failed", ex);
+                                throw ex;
+                            }
+                        }
+
+                        var fNameToSave =  exportFolder + nodeToBeSaved.Name.LocalName +"_" + nodeNameAttribute + ".xml";
                         nodeToBeSaved.Save(fNameToSave);
                         Console.WriteLine(reader.ReadOuterXml());
+                        reader.Skip();
                     }
                 }
             }
