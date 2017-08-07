@@ -1,6 +1,7 @@
 ﻿using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,52 +13,81 @@ namespace PlcOpenXmlSplitter.XmlParser
 {
     public class PlcOpenXmlParser : IRunnable
     {
+        #region Private Properties
+
+        /// <summary>
+        /// log4net logger
+        /// </summary>
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+        /// <summary>
+        /// XML reader to parse XML file
+        /// </summary>
         private XmlReader reader = null;
+        /// <summary>
+        /// contains the path of the folder which contains the XML file to be parsed
+        /// </summary>
+        private string xmlFolder = null;
+        /// <summary>
+        /// relative or absolute path to the XML file to be parsed
+        /// </summary>
+        private string fileName = null;
 
-        public string FileName { get; set; } = null;
+        #endregion
 
-        public PlcOpenXmlParser() { }
+        #region Public Properties
+
+        // filename to parse, initially set by constructor
+        public string FileName
+        {
+            get { return fileName; }
+            set
+            {
+                fileName = new FileInfo(value).FullName;
+                xmlFolder = new FileInfo(fileName).DirectoryName;
+            }
+        }
+
+
+        #endregion
+
+        #region Constructors
+
+        //public PlcOpenXmlParser() { }
 
         public PlcOpenXmlParser(string filename)
         {
             this.FileName = filename;
         }
 
+        #endregion
+
+        #region Methods
         public void run()
         {
-            //while (this.reader.Read())
-            //{
-            //    if (reader.Name == "pou")
-            //    {
-            //        var element = XmlNode();
-            //        reader.ReadInnerXml();
-            //    }
-            //}
-
             this.createReader();
 
-            var xmlDoc = XElement.Load(this.reader);
-
-            log.Debug("Query xml document for pou elements");
-            // TODO
-            var root = xmlDoc.Elements();
-            var pous = xmlDoc.Element("types");
-            var result = from el in root.Descendants("types").Descendants("pous")
-                         where el.Name.Equals("pou")
-                         select el;
-
-            log.Debug("write each pou element to separate file");
-            foreach (var element in result)
+            using (reader)
             {
-                log.Debug(element.BaseUri);
-                var elementFileName = @"C:\Users\rdoe\Repositories\PlcOpenXmlSplitter\TestData\" + element.Attribute("name") + ".xml";
-                element.Save(elementFileName);
+                while (reader.Read())
+                {
+                    // check for start element and name attribute not empty
+                    if (reader.IsStartElement() && reader.GetAttribute("name") != null)
+                    {
+                        // holds the value of the 'name' attribute of current xml node 
+                        var nodeNameAttribute = reader.GetAttribute("name");
+                        var nodeToBeSaved = XElement.Parse(reader.ReadOuterXml());
+                        var fNameToSave = this.xmlFolder + @"\" + nodeToBeSaved.Name.LocalName +"_" + nodeNameAttribute + ".xml";
+                        nodeToBeSaved.Save(fNameToSave);
+                        Console.WriteLine(reader.ReadOuterXml());
+                    }
+                }
             }
         }
 
-        void createReader()
+        /// <summary>
+        /// checks the validity of the property FileName and creates a private XML reader with the FileName 
+        /// </summary>
+        private void createReader()
         {
             if (this.FileName != null)
             {
@@ -73,8 +103,29 @@ namespace PlcOpenXmlSplitter.XmlParser
             }
             else
             {
-                throw new ArgumentNullException("FileName", "No filename set, cannot run XML parser");
+                var ex = new ArgumentNullException("FileName", "No filename set, cannot run XML parser");
+                log.Error(ex.Message, ex);
+                throw ex;
             }
         }
+
+        /// <summary>
+        /// creates the folder structure specified in Readme.md
+        /// </summary>
+        private void createFolderStructure()
+        {
+            if (this.xmlFolder != null)
+            {
+                
+            }
+            else
+            {
+                var ex = new ArgumentNullException("xmlFolder", "No root folder specified, cannot create folder structure");
+                log.Error(ex.Message, ex);
+                throw ex;
+            }
+        }
+        
+        #endregion
     }
 }
