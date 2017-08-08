@@ -2,6 +2,10 @@
 
 This project contains an App that takes a PlcOpen XMl export file of an entire Application and splits it into single files. This serves the purpose to make versioning of such PLC applications easier and to allow teamwork.
 
+### Required Software
+- Microsoft Visual Studio 2017
+- yEd Graph Editor
+
 
 ### Splits
 The following tree structure shows how plcopen documents are split up into different folders and files.
