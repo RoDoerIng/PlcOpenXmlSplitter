@@ -68,7 +68,8 @@ namespace PlcOpenXmlSplitter.XmlParser
 
             using (reader)
             {
-                while (reader.Read())
+                reader.Read();
+                while (!reader.EOF)
                 {
                     // check for start element and name attribute not empty
                     if (reader.IsStartElement() && reader.GetAttribute("name") != null)
@@ -100,7 +101,10 @@ namespace PlcOpenXmlSplitter.XmlParser
                         var fNameToSave =  exportFolder + nodeToBeSaved.Name.LocalName +"_" + nodeNameAttribute + ".xml";
                         nodeToBeSaved.Save(fNameToSave);
                         Console.WriteLine(reader.ReadOuterXml());
-                        reader.Skip();
+                    }
+                    else
+                    {
+                        reader.Read();
                     }
                 }
             }
